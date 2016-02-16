@@ -5,11 +5,12 @@ var lang =  {
     AENG: 'american_english'
 }
 
-//make request to oxforddictionaries then call parse function with response as parameter
+//make request to oxforddictionaries
 function getWord(word, language, callback){
     var x = new XMLHttpRequest();
     x.onload = function() {
-        callback(parseIt(x.response, word));
+        callback(parseIt(x.response));
+        //pass the parseIt func result to callback function
     };
     x.open('GET', 
         'http://www.oxforddictionaries.com/search/?direct=1&multi=1&dictCode='+language+'&q='+word, true);
@@ -43,20 +44,18 @@ chrome.browserAction.onClicked.addListener(function(){
 		{file:'inject.js'});
 });
 
+
+//listen to message  from content script  
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-
-    getWord(request.greeting, lang.ENG, function(data){
-
+    //send a message that contains parsed data to content script
+    getWord(request.word, lang.ENG, function(data){
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-              chrome.tabs.sendMessage(tabs[0].id, {greeting: data}, function(response) {
+              chrome.tabs.sendMessage(tabs[0].id, {defs: data}, function(response) {
                 console.log(response.farewell);
               });
-            });
-        
+            });     
     });
-
-    sendResponse('got it');
 });
 
 
