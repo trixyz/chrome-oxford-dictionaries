@@ -13,5 +13,6 @@
     "scripts": ["third/jquery-2.2.0.min.js", "background.js"],
     "persistent": false
   },
+  "web_accessible_resources": ["loading.gif"],
   "manifest_version": 2
 }
