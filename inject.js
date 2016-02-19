@@ -9,7 +9,7 @@ popup.style =  {
     top: "0px",
     left: "0px",
 }
-popup.loading = chrome.extension.getURL("loading.gif");
+popup.loading = chrome.extension.getURL("images/loading.gif");
 popup.hasDrown = false;
 
 

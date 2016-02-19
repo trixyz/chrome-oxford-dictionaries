@@ -6,8 +6,8 @@
     "tabs", "http://*/*", "https://*/*"
   ],
   "browser_action": {
-      "default_title": "Set this page's color.",
-      "default_icon": "icon.png"
+      "default_title": "On/off addon",
+      "default_icon": "images/icon.png"
   },
   "background":{
     "scripts": ["third/jquery-2.2.0.min.js", "background.js"],

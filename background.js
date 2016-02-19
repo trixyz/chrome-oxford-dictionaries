@@ -45,11 +45,11 @@ chrome.browserAction.onClicked.addListener(function(){
         chrome.tabs.sendMessage(tabs[0].id, {turn: 'turn'}, function(response) {
             if(response.turn=="off"){
                 chrome.browserAction.setIcon({path:{
-                    "38":"icon-off.png"
+                    "38":"images/icon-off.png"
                 }});
             } else {
                 chrome.browserAction.setIcon({path:{
-                    "38":"icon.png"
+                    "38":"images/icon.png"
                 }});
             }
         });  
