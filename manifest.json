@@ -13,7 +13,7 @@
     "scripts": ["third/jquery-2.2.0.min.js", "background.js"],
     "persistent": false
   },
-  "web_accessible_resources": ["loading.gif"],
+  "web_accessible_resources": ["images/loading.gif"],
   "content_scripts":[
   {
     "matches": ["<all_urls>"],
