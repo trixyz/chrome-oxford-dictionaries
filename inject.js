@@ -85,14 +85,14 @@ function dbClickHandler(event) {
     }
     var text;
     var x = event.pageX;
-    
-    if (event.clientX+popup.style.width>window.innerWidth){
-        x -= popup.style.width;
+    var popupWidth = parseInt(popup.style.width);
+    if (event.clientX+popupWidth>window.innerWidth){
+        x -= popupWidth;
     }
     var y = event.pageY;
-    
-    if (event.clientY+popup.style.height>window.innerHeight){
-        y -= popup.style.height;
+    var popupHeight = parseInt(popup.style.height);
+    if (event.clientY+popupHeight>window.innerHeight){
+        y -= popupHeight;
     }
     text = window.getSelection().toString();
     if (text){
