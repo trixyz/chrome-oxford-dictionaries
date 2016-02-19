@@ -1,0 +1,28 @@
+#oxPopup{
+    position: absolute;
+    background-color: white;
+    padding: 5px;
+    z-index: 99999999;
+    overflow: auto;
+
+    border-radius: 40px 40px 40px 40px;
+    -moz-border-radius: 40px 40px 40px 40px;
+    -webkit-border-radius: 40px 40px 40px 40px;
+    border: 15px solid #617dcf;
+
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}
+
+#oxPopup h1{
+    text-align: center;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+#oxPopup p{
+    text-align: left;
+    font-size: 1.2em;
+    margin: 10px 0;
+}

@@ -1,7 +1,7 @@
 {
-  "name": "A browser action with a popup that changes the page color",
-  "description": "Change the current page color",
-  "version": "1.0",
+  "name": "Popup with oxforddictionaries.com definitions",
+  "description": "Show popup with oxforddictionaries.com definitions of word by doubleclick it",
+  "version": "0.8",
   "permissions": [
     "tabs", "http://*/*", "https://*/*"
   ],
@@ -14,5 +14,13 @@
     "persistent": false
   },
   "web_accessible_resources": ["loading.gif"],
+  "content_scripts":[
+  {
+    "matches": ["<all_urls>"],
+    "js": ["inject.js"],
+    "css": ["styles.css"]
+    }
+  ],
+
   "manifest_version": 2
 }

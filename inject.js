@@ -1,18 +1,13 @@
 "use strict";
 
+
 var popup = new Object();
 popup.id = "oxPopup";
 popup.style =  {
-    position:  "absolute",
-    backgroundColor: "white",
-    border: "3px double black",
-    width: "500px",
+    width: "400px",
     height: "300px",
     top: "0px",
     left: "0px",
-    padding: "5px",
-    zIndex: 20,
-    overflow: "auto"
 }
 popup.loading = chrome.extension.getURL("loading.gif");
 popup.hasDrown = false;
@@ -22,22 +17,16 @@ function createPopup(data){
     var popupBody = document.createElement("div");
 
     popupBody.id = data.id;
-    popupBody.style.position = data.style["position"];
-    popupBody.style.backgroundColor = data.style["backgroundColor"];
-    popupBody.style.border = data.style["border"];
     popupBody.style.width = data.style["width"];
     popupBody.style.height = data.style["height"];
     popupBody.style.top = data.style["top"];
     popupBody.style.left = data.style["left"];
-    popupBody.style.padding = data.style["padding"];
-    popupBody.style.zIndex = data.style["zIndex"];
-    popupBody.style.overflow = data.style["overflow"];
 
     var loading = document.createElement("img");
 
     loading.style.display = "block";
-    loading.style.marginLeft = "auto";
-    loading.style.marginRight = "auto";
+    loading.style.margin = "auto";
+    loading.style.marginUp = "100px";
     loading.id = "imgLoading";
     loading.src = data.loading;
     popupBody.appendChild(loading);
@@ -50,6 +39,7 @@ function addData(data){
     var popupChild = document.createElement('div');
     popupChild.id = 'oxChild';
     var word = document.createElement('h1');
+    word.id = 'oxChild';
     word.innerHTML = data.word;
 
     popupChild.appendChild(word);
@@ -57,12 +47,19 @@ function addData(data){
         for (var def of sense){
             var elem = document.createElement('p');
             elem.innerHTML = def;
+            elem.id = 'oxChild';
             popupChild.appendChild(elem);
         }
     }
+    var url = document.createElement('p');
+    url.innerHTML = "Get examples and synonyms of " + data.word + " at:<br>" + 
+    '<a href="'+data.url+'"id="oxChild">oxforddictionaries.com</a>';
+    url.id = 'oxChild';
+    popupChild.appendChild(url);
 
     document.getElementById('oxPopup').removeChild(document.getElementById("imgLoading"));
     document.getElementById('oxPopup').appendChild(popupChild);
+
 
 }
 
@@ -76,34 +73,30 @@ function removePopup(){
 }
 
 document.onclick = function(e) {
-    console.log(e.target);
-    console.log(e.target.id);
-    if (e.target.id == "oxChild"){
-        console.log('epta');
-    }
     if(popup.hasDrown && e.target != document.getElementById('oxPopup') && e.target.id != "oxChild") {
         removePopup();
     }
 }
 
-document.addEventListener('dblclick', function (event) {
-    console.log(popup.hasDrown);
+
+function dbClickHandler(event) {
     if (popup.hasDrown){
         removePopup();
-        return;
     }
     var text;
     var x = event.pageX;
-    console.log('x is '+ event.pageX);
-    if (event.clientX+500>window.innerWidth){
-        x -= 500;
+    
+    if (event.clientX+popup.style.width>window.innerWidth){
+        x -= popup.style.width;
     }
     var y = event.pageY;
-    console.log('y is '+ event.pageY);
-    if (event.clientY+300>window.innerHeight){
-        y -= 300;
+    
+    if (event.clientY+popup.style.height>window.innerHeight){
+        y -= popup.style.height;
     }
-    if (window.getSelection){
+    text = window.getSelection().toString();
+    if (text){
+        console.log(window.getSelection());
         text = window.getSelection().toString();
         popup.style["top"] = String(y+10)+"px";
         popup.style["left"] = String(x+10)+"px";
@@ -111,16 +104,29 @@ document.addEventListener('dblclick', function (event) {
         popup.hasDrown = true;
         chrome.runtime.sendMessage({word: text}, function(response) {});
     } else {console.log('no selection')}
-    
+}
 
-});
-
-
+document.addEventListener('dblclick', dbClickHandler);
+var listen = true;
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        var data = request.defs
-        addData(data);
+        console.log(request);
+        if (request.turn){
+            if(listen==true){
+                document.removeEventListener('dblclick', dbClickHandler);
+                listen = false;
+                sendResponse({turn: "off"});
+            } else {
+                document.addEventListener('dblclick', dbClickHandler);
+                listen = true;
+                sendResponse({turn: "on"});
+            }
+        } else {
+            var data = request.defs
+            addData(data);
+        }
+
   });
 
 

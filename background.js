@@ -8,18 +8,18 @@ var lang =  {
 //make request to oxforddictionaries
 function getWord(word, language, callback){
     var x = new XMLHttpRequest();
+    var url = 'http://www.oxforddictionaries.com/search/?direct=1&multi=1&dictCode='+language+'&q='+word;
     x.onload = function() {
-        callback(parseIt(x.response));
+        callback(parseIt(x.response,url));
         //pass the parseIt func result to callback function
     };
-    x.open('GET', 
-        'http://www.oxforddictionaries.com/search/?direct=1&multi=1&dictCode='+language+'&q='+word, true);
+    x.open('GET', url, true);
     x.send();
 }
 
 
 //get HTML string, parse it for data then return it as JSON  
-function parseIt(str){
+function parseIt(str,url){
     var doc = $.parseHTML(str);
     var group = $(doc).find('.se1.senseGroup');
     var result = new Object();
@@ -31,19 +31,30 @@ function parseIt(str){
         var subgroup = $(this).find('.msDict');
         $(subgroup).each(function(){
             var num = $(this).find('.iteration').text();
-            var definition = $(this).find('.definition').text();
+            var definition = $(this).find('.definition').text().replace(':','.');
             var block = num+ '. ' +$.trim(definition);
             result.senses[index].push(block);
         });    
     });
+    result.url = url;
     return JSON.stringify(result);
 }
 
 chrome.browserAction.onClicked.addListener(function(){
-	chrome.tabs.executeScript(null,
-		{file:'inject.js'});
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {turn: 'turn'}, function(response) {
+            if(response.turn=="off"){
+                chrome.browserAction.setIcon({path:{
+                    "38":"icon-off.png"
+                }});
+            } else {
+                chrome.browserAction.setIcon({path:{
+                    "38":"icon.png"
+                }});
+            }
+        });  
+    });
 });
-
 
 //listen to message  from content script  
 chrome.runtime.onMessage.addListener(
