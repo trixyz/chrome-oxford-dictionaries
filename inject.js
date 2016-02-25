@@ -90,20 +90,26 @@ function dbClickHandler(event) {
     if (popup.hasDrown){
         removePopup();
     }
+    if (event.target != document.getElementById('oxPopup') && event.target.id != "oxChild"){
+        var x = event.pageX;
+        var popupWidth = parseInt(popup.style.width);
 
-    var x = event.pageX;
-    var popupWidth = parseInt(popup.style.width);
-    if (event.clientX+popupWidth>window.innerWidth){
-        x -= popupWidth;
-    }
-    var y = event.pageY;
-    var popupHeight = parseInt(popup.style.height);
-    if (event.clientY+popupHeight>window.innerHeight){
-        y -= popupHeight;
-    }
-    if (text){
+        if (event.clientX+popupWidth>window.innerWidth){
+            x -= popupWidth;
+        }
+
+        var y = event.pageY;
+        var popupHeight = parseInt(popup.style.height);
+
+        if (event.clientY+popupHeight>window.innerHeight){
+            y -= popupHeight;
+        }
+
         popup.style["top"] = String(y+10)+"px";
         popup.style["left"] = String(x+10)+"px";
+    }
+    
+    if (text){
         document.body.appendChild(createPopup(popup));
         popup.hasDrown = true;
         chrome.runtime.sendMessage({word: text}, function(response) {});
