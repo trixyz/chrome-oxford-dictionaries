@@ -36,31 +36,37 @@ function createPopup(data){
 
 function addData(data){
     data = JSON.parse(data);
-    var popupChild = document.createElement('div');
-    popupChild.id = 'oxChild';
-    var word = document.createElement('h1');
-    word.id = 'oxChild';
-    word.innerHTML = data.word;
+    if (data.word){
+        var popupChild = document.createElement('div');
+        popupChild.id = 'oxChild';
+        var word = document.createElement('h1');
+        word.id = 'oxChild';
+        word.innerHTML = data.word;
 
-    popupChild.appendChild(word);
-    for (var sense of data.senses){
-        for (var def of sense){
-            var elem = document.createElement('p');
-            elem.innerHTML = def;
-            elem.id = 'oxChild';
-            popupChild.appendChild(elem);
+        popupChild.appendChild(word);
+        for (var sense of data.senses){
+            for (var def of sense){
+                var elem = document.createElement('p');
+                elem.innerHTML = def;
+                elem.id = 'oxChild';
+                popupChild.appendChild(elem);
+            }
         }
+        var url = document.createElement('p');
+        url.innerHTML = "Get examples and synonyms of " + data.word + " at:<br>" + 
+        '<a href="'+data.url+'"id="oxChild">oxforddictionaries.com</a>';
+        url.id = 'oxChild';
+        popupChild.appendChild(url);
+
+        document.getElementById('oxPopup').removeChild(document.getElementById("imgLoading"));
+        document.getElementById('oxPopup').appendChild(popupChild);
+    } else {
+        var popupChild = document.createElement('div');
+        popupChild.id = 'oxChild';
+        popupChild.innerHTML = "No exact match";
+        document.getElementById('oxPopup').removeChild(document.getElementById("imgLoading"));
+        document.getElementById('oxPopup').appendChild(popupChild);
     }
-    var url = document.createElement('p');
-    url.innerHTML = "Get examples and synonyms of " + data.word + " at:<br>" + 
-    '<a href="'+data.url+'"id="oxChild">oxforddictionaries.com</a>';
-    url.id = 'oxChild';
-    popupChild.appendChild(url);
-
-    document.getElementById('oxPopup').removeChild(document.getElementById("imgLoading"));
-    document.getElementById('oxPopup').appendChild(popupChild);
-
-
 }
 
 
@@ -80,10 +86,11 @@ document.onclick = function(e) {
 
 
 function dbClickHandler(event) {
+    var text = window.getSelection().toString();
     if (popup.hasDrown){
         removePopup();
     }
-    var text;
+
     var x = event.pageX;
     var popupWidth = parseInt(popup.style.width);
     if (event.clientX+popupWidth>window.innerWidth){
@@ -94,10 +101,7 @@ function dbClickHandler(event) {
     if (event.clientY+popupHeight>window.innerHeight){
         y -= popupHeight;
     }
-    text = window.getSelection().toString();
     if (text){
-        console.log(window.getSelection());
-        text = window.getSelection().toString();
         popup.style["top"] = String(y+10)+"px";
         popup.style["left"] = String(x+10)+"px";
         document.body.appendChild(createPopup(popup));
