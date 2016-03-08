@@ -13,6 +13,8 @@ popup.loading = chrome.extension.getURL("images/loading.gif");
 popup.hasDrown = false;
 
 
+var wordsHistory = [];
+
 function createPopup(data){
     var popupBody = document.createElement("div");
 
@@ -34,11 +36,30 @@ function createPopup(data){
     return popupBody;
 }
 
+function getBackInHistory(){
+    document.getElementById('oxPopup').innerHTML = wordsHistory[wordsHistory.length-1];
+    console.log(wordsHistory[wordsHistory.length-1]);
+    wordsHistory.pop();
+    if (wordsHistory.length>0){
+        document.getElementById('oxChildButton').onclick = getBackInHistory;
+    }
+
 function addData(data){
+
     data = JSON.parse(data);
+
+    var popupChild = document.createElement('div');
+    popupChild.id = 'oxChild';
+
+    if (wordsHistory.length > 0){
+        var historyButton = document.createElement('button');
+        historyButton.onclick = getBackInHistory;
+        historyButton.id = 'oxChildButton';
+        historyButton.innerHTML = 'Back';
+        popupChild.appendChild(historyButton);
+    }
     if (data.word){
-        var popupChild = document.createElement('div');
-        popupChild.id = 'oxChild';
+
         var word = document.createElement('h1');
         word.id = 'oxChild';
         word.innerHTML = data.word;
@@ -60,9 +81,9 @@ function addData(data){
 
         document.getElementById('oxPopup').removeChild(document.getElementById("imgLoading"));
         document.getElementById('oxPopup').appendChild(popupChild);
+        
     } else {
-        var popupChild = document.createElement('div');
-        popupChild.id = 'oxChild';
+
         popupChild.innerHTML = "No exact match";
         document.getElementById('oxPopup').removeChild(document.getElementById("imgLoading"));
         document.getElementById('oxPopup').appendChild(popupChild);
@@ -71,6 +92,8 @@ function addData(data){
 
 
 function removePopup(){
+    wordsHistory.push(document.getElementById('oxPopup').innerHTML);
+
     var pop = document.getElementById('oxPopup'); 
     var dad = pop.parentNode;
     dad.removeChild(pop);
@@ -79,14 +102,22 @@ function removePopup(){
 }
 
 document.onclick = function(e) {
-    if(popup.hasDrown && e.target != document.getElementById('oxPopup') && e.target.id != "oxChild") {
+    if(popup.hasDrown && e.target != document.getElementById('oxPopup') && e.target.id != "oxChild" &&
+        e.target.id != "oxChildButton") {
         removePopup();
     }
 }
 
 
 function dbClickHandler(event) {
+    
     var text = window.getSelection().toString();
+    var isText = text.charCodeAt(0)
+    console.log(isText);
+    if(isText==10 || isNaN(isText)){
+        console.log('empty');
+        return;
+    }
     if (popup.hasDrown){
         removePopup();
     }
@@ -109,11 +140,11 @@ function dbClickHandler(event) {
         popup.style["left"] = String(x+10)+"px";
     }
     
-    if (text){
-        document.body.appendChild(createPopup(popup));
-        popup.hasDrown = true;
-        chrome.runtime.sendMessage({word: text}, function(response) {});
-    } else {console.log('no selection')}
+
+    document.body.appendChild(createPopup(popup));
+    popup.hasDrown = true;
+    chrome.runtime.sendMessage({word: text}, function(response) {});
+    
 }
 
 document.addEventListener('dblclick', dbClickHandler);
