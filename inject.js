@@ -43,6 +43,7 @@ function getBackInHistory(){
     if (wordsHistory.length>0){
         document.getElementById('oxChildButton').onclick = getBackInHistory;
     }
+}
 
 function addData(data){
 
@@ -168,8 +169,4 @@ chrome.runtime.onMessage.addListener(
             addData(data);
         }
 
-  });
-
-
-
-
+  })
